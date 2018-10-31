@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">videothumbselect</string>
+    <string name="choose_thumbnail_button_text">Done</string>
+    <string name="choose_thumbnail_title">Choose Thumbnail for the Video</string>
 </resources>
