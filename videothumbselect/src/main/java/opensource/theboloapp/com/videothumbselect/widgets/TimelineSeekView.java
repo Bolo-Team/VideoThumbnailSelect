@@ -36,7 +36,7 @@ public class TimelineSeekView extends View {
 
     private int windowSize;
 
-    private int draggerWidth = 6, handleCircleRadius = Utils.dpToPixels(5), draggerOvershootHeight = Utils.dpToPixels(5);
+    private int sliderWidth = 6, sliderHandleCircleRadius = Utils.dpToPixels(5), sliderOvershootHeight = Utils.dpToPixels(5);
 
     private float thumbPosition = 0;
 
@@ -112,7 +112,7 @@ public class TimelineSeekView extends View {
 
         handlePaint = new Paint();
         handlePaint.setAntiAlias(true);
-        handlePaint.setColor(0xFFFFFFFF);
+        handlePaint.setColor(Color.WHITE);
 
     }
 
@@ -148,9 +148,9 @@ public class TimelineSeekView extends View {
 
         canvas.drawRect(thumbPosition - windowSize / 2, 0, thumbPosition + windowSize / 2, thumbSize, transparentPaint);
 
-        canvas.drawRect(thumbPosition - draggerWidth / 2, 0, thumbPosition + draggerWidth / 2, thumbSize + draggerOvershootHeight, handlePaint);
+        canvas.drawRect(thumbPosition - sliderWidth / 2, 0, thumbPosition + sliderWidth / 2, thumbSize + sliderOvershootHeight, handlePaint);
 
-        canvas.drawCircle(thumbPosition, thumbSize + draggerOvershootHeight + handleCircleRadius, handleCircleRadius, handlePaint);
+        canvas.drawCircle(thumbPosition, thumbSize + sliderOvershootHeight + sliderHandleCircleRadius, sliderHandleCircleRadius, handlePaint);
 
     }
 

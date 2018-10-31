@@ -1,4 +1,4 @@
-package opensource.theboloapp.com.videothumbselect.activities;
+package opensource.theboloapp.com.videothumbselect;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -39,15 +39,16 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import opensource.theboloapp.com.videothumbselect.R;
 import opensource.theboloapp.com.videothumbselect.widgets.TimelineSeekView;
 import opensource.theboloapp.com.videothumbselect.widgets.VideoTimelineView;
 
-public class ChooseThumbnailActivity extends AppCompatActivity implements
+class ChooseThumbnailActivity extends AppCompatActivity implements
         VideoTimelineView.PreparedListener,
         TimelineSeekView.ThumbPositionListener {
 
     public static final String INTENT_EXTRA_VIDEO_PATH = "video_path";
+
+    public static final String INTENT_EXTRA_CONFIGURATION = "configuration";
 
     public static final String INTENT_RESULT_EXTRA_THUMB_POSITION = "result_thumb_position";
     public static final String INTENT_RESULT_EXTRA_THUMB_BITMAP_FILENAME = "result_thumb_bitmap_filename";
@@ -119,7 +120,7 @@ public class ChooseThumbnailActivity extends AppCompatActivity implements
                         .create(new ObservableOnSubscribe<String>() {
                             @Override
                             public void subscribe(ObservableEmitter<String> emitter) throws Exception {
-//                                emitter.onNext(Utils.createFileForBitmap(ChooseThumbnailActivity.this, finalThumbBitmap));
+                                emitter.onNext(Utils.createFileForBitmap(ChooseThumbnailActivity.this, finalThumbBitmap));
                             }
                         }).subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
