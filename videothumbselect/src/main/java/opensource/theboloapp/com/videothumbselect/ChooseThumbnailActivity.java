@@ -1,7 +1,6 @@
 package opensource.theboloapp.com.videothumbselect;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -19,10 +18,10 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -42,7 +41,7 @@ import io.reactivex.schedulers.Schedulers;
 import opensource.theboloapp.com.videothumbselect.widgets.TimelineSeekView;
 import opensource.theboloapp.com.videothumbselect.widgets.VideoTimelineView;
 
-class ChooseThumbnailActivity extends AppCompatActivity implements
+public class ChooseThumbnailActivity extends AppCompatActivity implements
         VideoTimelineView.PreparedListener,
         TimelineSeekView.ThumbPositionListener {
 
@@ -52,6 +51,8 @@ class ChooseThumbnailActivity extends AppCompatActivity implements
 
     public static final String INTENT_RESULT_EXTRA_THUMB_POSITION = "result_thumb_position";
     public static final String INTENT_RESULT_EXTRA_THUMB_BITMAP_FILENAME = "result_thumb_bitmap_filename";
+
+    private Configuration configuration;
 
     private String videoPath;
 
@@ -73,20 +74,21 @@ class ChooseThumbnailActivity extends AppCompatActivity implements
     private boolean isPreviewReady = false;
     private boolean isTimelineReady = false;
 
-    private ProgressDialog progressDialog;
+//    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_thumbnail);
 
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
-        progressDialog.setIndeterminate(true);
+//        progressDialog = new ProgressDialog(this);
+//        progressDialog.setCancelable(false);
+//        progressDialog.setIndeterminate(true);
 
         Intent receivedIntent = getIntent();
-        if (receivedIntent.hasExtra(INTENT_EXTRA_VIDEO_PATH)) {
-            videoPath = receivedIntent.getStringExtra(INTENT_EXTRA_VIDEO_PATH);
+        if (receivedIntent.hasExtra(INTENT_EXTRA_CONFIGURATION)) {
+            configuration = receivedIntent.getParcelableExtra(INTENT_EXTRA_CONFIGURATION);
+            videoPath = configuration.getVideoSource();
         } else {
             Toast.makeText(this, "Set video path in intent", Toast.LENGTH_SHORT).show();
             setResult(RESULT_CANCELED);
@@ -114,8 +116,8 @@ class ChooseThumbnailActivity extends AppCompatActivity implements
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressDialog.setMessage("Generating Bitmap...");
-                progressDialog.show();
+//                progressDialog.setMessage("Generating Bitmap...");
+//                progressDialog.show();
                 Disposable disposable = Observable
                         .create(new ObservableOnSubscribe<String>() {
                             @Override
@@ -125,14 +127,14 @@ class ChooseThumbnailActivity extends AppCompatActivity implements
                         }).subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(fileName -> {
-                            progressDialog.dismiss();
+//                            progressDialog.dismiss();
                             Intent resultIntent = new Intent();
                             resultIntent.putExtra(INTENT_RESULT_EXTRA_THUMB_POSITION, finalThumbPosition);
                             resultIntent.putExtra(INTENT_RESULT_EXTRA_THUMB_BITMAP_FILENAME, fileName);
                             setResult(RESULT_OK, resultIntent);
                             finish();
                         }, e -> {
-                            progressDialog.dismiss();
+//                            progressDialog.dismiss();
                             setResult(RESULT_CANCELED);
                             finish();
                             e.printStackTrace();
@@ -202,7 +204,7 @@ class ChooseThumbnailActivity extends AppCompatActivity implements
 
         Uri uri = Uri.fromFile(new File(videoPath));
 
-        previewPlayer = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector(), new DefaultLoadControl());
+        previewPlayer = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(this), new DefaultTrackSelector(), new DefaultLoadControl());
 
         previewPlayer.addListener(new Player.DefaultEventListener() {
             @Override
@@ -232,8 +234,10 @@ class ChooseThumbnailActivity extends AppCompatActivity implements
                 return fileDataSource;
             }
         };
-        MediaSource videoSource = new ExtractorMediaSource(fileDataSource.getUri(),
-                factory, new DefaultExtractorsFactory(), null, null);
+//        MediaSource videoSource = new ExtractorMediaSource(fileDataSource.getUri(),
+//                factory, new DefaultExtractorsFactory(), null, null);
+
+        MediaSource videoSource = new ExtractorMediaSource.Factory(factory).createMediaSource(fileDataSource.getUri());
 
         previewPlayer.prepare(videoSource);
 

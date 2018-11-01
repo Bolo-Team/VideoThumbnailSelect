@@ -17,7 +17,7 @@
         android:textColor="#FFFFFF"
         android:textSize="14sp" />
 
-    <com.theboloapp.ui.customwidgets.VideoTimelineView
+    <opensource.theboloapp.com.videothumbselect.widgets.VideoTimelineView
         android:id="@+id/video_timeline_view"
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -28,7 +28,7 @@
         android:layout_marginTop="20dp"
         android:visibility="invisible" />
 
-    <com.theboloapp.ui.customwidgets.TimelineSeekView
+    <opensource.theboloapp.com.videothumbselect.widgets.TimelineSeekView
         android:id="@+id/timeline_seek_view"
         android:layout_width="match_parent"
         android:layout_height="70dp"
