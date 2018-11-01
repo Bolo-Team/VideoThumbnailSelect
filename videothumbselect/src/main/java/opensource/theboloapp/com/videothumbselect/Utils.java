@@ -3,10 +3,12 @@ package opensource.theboloapp.com.videothumbselect;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.Log;
 import android.util.TypedValue;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,14 +25,15 @@ public class Utils {
         return (float) pixel / r.getDisplayMetrics().density;
     }
 
-    public static String createFileForBitmap(Context context, Bitmap bitmap) {
+    public static Uri createFileForBitmap(Context context, Bitmap bitmap) {
 
         String filename = System.currentTimeMillis() + "_Thumb_Bitmap";
+        File file = new File(context.getCacheDir(), filename);
 
         Log.d("Utils", "Writing thumb bitmap : " + filename);
 
         try {
-            FileOutputStream fileOutputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
             fileOutputStream.close();
             bitmap.recycle();
@@ -44,7 +47,7 @@ public class Utils {
             Toast.makeText(context, "Failed to write thumb bitmap", Toast.LENGTH_SHORT).show();
         }
 
-        return filename;
+        return Uri.fromFile(file);
 
     }
 

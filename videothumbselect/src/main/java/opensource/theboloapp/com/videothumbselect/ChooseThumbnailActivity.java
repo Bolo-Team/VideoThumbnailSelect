@@ -50,7 +50,7 @@ public class ChooseThumbnailActivity extends AppCompatActivity implements
     public static final String INTENT_EXTRA_CONFIGURATION = "configuration";
 
     public static final String INTENT_RESULT_EXTRA_THUMB_POSITION = "result_thumb_position";
-    public static final String INTENT_RESULT_EXTRA_THUMB_BITMAP_FILENAME = "result_thumb_bitmap_filename";
+    public static final String INTENT_RESULT_EXTRA_THUMB_BITMAP_FILE_URI = "result_thumb_bitmap_file_uri";
 
     private Configuration configuration;
 
@@ -119,18 +119,18 @@ public class ChooseThumbnailActivity extends AppCompatActivity implements
 //                progressDialog.setMessage("Generating Bitmap...");
 //                progressDialog.show();
                 Disposable disposable = Observable
-                        .create(new ObservableOnSubscribe<String>() {
+                        .create(new ObservableOnSubscribe<Uri>() {
                             @Override
-                            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
+                            public void subscribe(ObservableEmitter<Uri> emitter) throws Exception {
                                 emitter.onNext(Utils.createFileForBitmap(ChooseThumbnailActivity.this, finalThumbBitmap));
                             }
                         }).subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(fileName -> {
+                        .subscribe(fileUri -> {
 //                            progressDialog.dismiss();
                             Intent resultIntent = new Intent();
                             resultIntent.putExtra(INTENT_RESULT_EXTRA_THUMB_POSITION, finalThumbPosition);
-                            resultIntent.putExtra(INTENT_RESULT_EXTRA_THUMB_BITMAP_FILENAME, fileName);
+                            resultIntent.putExtra(INTENT_RESULT_EXTRA_THUMB_BITMAP_FILE_URI, fileUri);
                             setResult(RESULT_OK, resultIntent);
                             finish();
                         }, e -> {
