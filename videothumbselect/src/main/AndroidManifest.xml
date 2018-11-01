@@ -1,2 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="opensource.theboloapp.com.videothumbselect" />
+    package="opensource.theboloapp.com.videothumbselect">
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application>
+        <activity android:name="opensource.theboloapp.com.videothumbselect.ChooseThumbnailActivity" />
+    </application>
+
+</manifest>
