@@ -15,6 +15,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -45,8 +46,6 @@ public class ChooseThumbnailActivity extends AppCompatActivity implements
         VideoTimelineView.PreparedListener,
         TimelineSeekView.ThumbPositionListener {
 
-    public static final String INTENT_EXTRA_VIDEO_PATH = "video_path";
-
     public static final String INTENT_EXTRA_CONFIGURATION = "configuration";
 
     public static final String INTENT_RESULT_EXTRA_THUMB_POSITION = "result_thumb_position";
@@ -76,16 +75,14 @@ public class ChooseThumbnailActivity extends AppCompatActivity implements
 
     private boolean isSeekProcessing = false;
 
-//    private ProgressDialog progressDialog;
+    private RelativeLayout progressWrapper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_thumbnail);
 
-//        progressDialog = new ProgressDialog(this);
-//        progressDialog.setCancelable(false);
-//        progressDialog.setIndeterminate(true);
+        progressWrapper = findViewById(R.id.progress_wrapper_layout);
 
         Intent receivedIntent = getIntent();
         if (receivedIntent.hasExtra(INTENT_EXTRA_CONFIGURATION)) {
@@ -118,26 +115,22 @@ public class ChooseThumbnailActivity extends AppCompatActivity implements
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                progressDialog.setMessage("Generating Bitmap...");
-//                progressDialog.show();
+                progressWrapper.setVisibility(View.VISIBLE);
                 Disposable disposable = Observable
-                        .create(new ObservableOnSubscribe<Uri>() {
-                            @Override
-                            public void subscribe(ObservableEmitter<Uri> emitter) throws Exception {
-                                finalThumbBitmap = previewTextureView.getBitmap();
-                                emitter.onNext(Utils.createFileForBitmap(ChooseThumbnailActivity.this, finalThumbBitmap));
-                            }
+                        .create((ObservableOnSubscribe<Uri>) emitter -> {
+                            finalThumbBitmap = previewTextureView.getBitmap();
+                            emitter.onNext(Utils.createFileForBitmap(ChooseThumbnailActivity.this, finalThumbBitmap));
                         }).subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(fileUri -> {
-//                            progressDialog.dismiss();
+                            progressWrapper.setVisibility(View.GONE);
                             Intent resultIntent = new Intent();
                             resultIntent.putExtra(INTENT_RESULT_EXTRA_THUMB_POSITION, finalThumbPosition);
                             resultIntent.putExtra(INTENT_RESULT_EXTRA_THUMB_BITMAP_FILE_URI, fileUri);
                             setResult(RESULT_OK, resultIntent);
                             finish();
                         }, e -> {
-//                            progressDialog.dismiss();
+                            progressWrapper.setVisibility(View.GONE);
                             setResult(RESULT_CANCELED);
                             finish();
                             e.printStackTrace();
@@ -246,8 +239,6 @@ public class ChooseThumbnailActivity extends AppCompatActivity implements
                 return fileDataSource;
             }
         };
-//        MediaSource videoSource = new ExtractorMediaSource(fileDataSource.getUri(),
-//                factory, new DefaultExtractorsFactory(), null, null);
 
         MediaSource videoSource = new ExtractorMediaSource.Factory(factory).createMediaSource(fileDataSource.getUri());
 
