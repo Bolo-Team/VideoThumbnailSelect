@@ -74,6 +74,8 @@ public class ChooseThumbnailActivity extends AppCompatActivity implements
     private boolean isPreviewReady = false;
     private boolean isTimelineReady = false;
 
+    private boolean isSeekProcessing = false;
+
 //    private ProgressDialog progressDialog;
 
     @Override
@@ -213,11 +215,20 @@ public class ChooseThumbnailActivity extends AppCompatActivity implements
                 super.onLoadingChanged(isLoading);
                 if (!isLoading) {
                     isPreviewReady = true;
-                    if (isTimelineReady) {
+                    if (isTimelineReady && !isSeekProcessing) {
                         progressBar.setVisibility(View.GONE);
                         doneButton.setVisibility(View.VISIBLE);
                     }
                 }
+            }
+
+            @Override
+            public void onSeekProcessed() {
+                super.onSeekProcessed();
+                if (isTimelineReady) {
+                    progressBar.setVisibility(View.GONE);
+                }
+                isSeekProcessing = false;
             }
         });
 
@@ -282,6 +293,8 @@ public class ChooseThumbnailActivity extends AppCompatActivity implements
     public void thumbPositionChanged(float thumbPositionFactor) {
         if (previewPlayer != null) {
             previewPlayer.seekTo((long) (thumbPositionFactor * previewPlayer.getDuration()));
+            progressBar.setVisibility(View.VISIBLE);
+            isSeekProcessing = true;
         } else {
             initializePreviewPlayer(videoPath);
         }
