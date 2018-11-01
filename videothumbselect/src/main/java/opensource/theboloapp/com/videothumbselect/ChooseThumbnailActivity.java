@@ -122,6 +122,7 @@ public class ChooseThumbnailActivity extends AppCompatActivity implements
                         .create(new ObservableOnSubscribe<Uri>() {
                             @Override
                             public void subscribe(ObservableEmitter<Uri> emitter) throws Exception {
+                                finalThumbBitmap = previewTextureView.getBitmap();
                                 emitter.onNext(Utils.createFileForBitmap(ChooseThumbnailActivity.this, finalThumbBitmap));
                             }
                         }).subscribeOn(Schedulers.io())
@@ -285,8 +286,6 @@ public class ChooseThumbnailActivity extends AppCompatActivity implements
             initializePreviewPlayer(videoPath);
         }
         this.finalThumbPosition = (long) (thumbPositionFactor * videoTimelineView.getVideoLengthInMicros());
-        this.finalThumbBitmap = previewTextureView.getBitmap();
-
     }
 
 }
