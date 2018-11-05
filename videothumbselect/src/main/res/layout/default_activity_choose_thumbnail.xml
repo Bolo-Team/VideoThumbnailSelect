@@ -63,19 +63,11 @@
         android:text="@string/choose_thumbnail_button_text"
         android:textColor="@color/black" />
 
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="visible" />
-
     <RelativeLayout
         android:id="@+id/progress_wrapper_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#AA000000"
-        android:visibility="gone">
+        android:background="#AA000000">
 
         <ProgressBar
             android:id="@+id/generate_bitmap_progress"
@@ -94,6 +86,5 @@
             android:textSize="14sp" />
 
     </RelativeLayout>
-
 
 </RelativeLayout>

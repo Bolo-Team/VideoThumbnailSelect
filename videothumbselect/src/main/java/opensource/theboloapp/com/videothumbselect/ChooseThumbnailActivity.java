@@ -13,7 +13,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.TextureView;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -56,8 +55,6 @@ public class ChooseThumbnailActivity extends AppCompatActivity implements
     private VideoTimelineView videoTimelineView;
     private TimelineSeekView timelineSeekView;
 
-    private ProgressBar progressBar;
-
     private long finalThumbPosition = 0;
     private Bitmap finalThumbBitmap;
 
@@ -78,9 +75,6 @@ public class ChooseThumbnailActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_choose_thumbnail);
-
-        progressWrapper = findViewById(R.id.progress_wrapper_layout);
 
         Intent receivedIntent = getIntent();
         if (receivedIntent.hasExtra(INTENT_EXTRA_CONFIGURATION)) {
@@ -100,7 +94,9 @@ public class ChooseThumbnailActivity extends AppCompatActivity implements
             return;
         }
 
-        progressBar = findViewById(R.id.progress_bar);
+        setContentView(configuration.getLayoutRESId());
+
+        progressWrapper = findViewById(R.id.progress_wrapper_layout);
 
         thumbPreview = findViewById(R.id.thumb_preview);
 
@@ -208,7 +204,7 @@ public class ChooseThumbnailActivity extends AppCompatActivity implements
                 if (!isLoading) {
                     isPreviewReady = true;
                     if (isTimelineReady && !isSeekProcessing) {
-                        progressBar.setVisibility(View.GONE);
+                        progressWrapper.setVisibility(View.GONE);
                         doneButton.setVisibility(View.VISIBLE);
                     }
                 }
@@ -217,9 +213,6 @@ public class ChooseThumbnailActivity extends AppCompatActivity implements
             @Override
             public void onSeekProcessed() {
                 super.onSeekProcessed();
-                if (isTimelineReady) {
-                    progressBar.setVisibility(View.GONE);
-                }
                 isSeekProcessing = false;
             }
         });
@@ -254,7 +247,7 @@ public class ChooseThumbnailActivity extends AppCompatActivity implements
     public void onPrepared() {
         isTimelineReady = true;
         if (isPreviewReady) {
-            progressBar.setVisibility(View.GONE);
+            progressWrapper.setVisibility(View.GONE);
             doneButton.setVisibility(View.VISIBLE);
         }
         videoTimelineView.setVisibility(View.VISIBLE);
@@ -283,7 +276,6 @@ public class ChooseThumbnailActivity extends AppCompatActivity implements
     public void thumbPositionChanged(float thumbPositionFactor) {
         if (previewPlayer != null) {
             previewPlayer.seekTo((long) (thumbPositionFactor * previewPlayer.getDuration()));
-            progressBar.setVisibility(View.VISIBLE);
             isSeekProcessing = true;
         } else {
             initializePreviewPlayer(videoPath);

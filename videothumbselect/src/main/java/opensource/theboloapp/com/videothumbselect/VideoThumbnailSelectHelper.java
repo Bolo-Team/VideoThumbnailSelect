@@ -24,6 +24,11 @@ public class VideoThumbnailSelectHelper {
         return this;
     }
 
+    public VideoThumbnailSelectHelper setLayoutRESId(int resID) {
+        configuration.setLayoutRESId(resID);
+        return this;
+    }
+
     public VideoThumbnailSelectHelper setNumThumbnails(int numThumbnails) {
         configuration.setNumThumbnails(numThumbnails);
         return this;

@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 public class Configuration implements Parcelable {
 
+    private int layoutRESId = Defaults.LAYOUT_RESOURCE_ID;
+
     private int numThumbnails = Defaults.NUM_THUMBNAILS;
 
     private int timelineSeekViewHandleColor = Defaults.TIMELINE_SEEK_VIEW_HANDLE_COLOR;
@@ -18,6 +20,7 @@ public class Configuration implements Parcelable {
     }
 
     protected Configuration(Parcel in) {
+        layoutRESId = in.readInt();
         numThumbnails = in.readInt();
         timelineSeekViewHandleColor = in.readInt();
         timelineSeekViewSliderWidth = in.readInt();
@@ -28,6 +31,7 @@ public class Configuration implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(layoutRESId);
         dest.writeInt(numThumbnails);
         dest.writeInt(timelineSeekViewHandleColor);
         dest.writeInt(timelineSeekViewSliderWidth);
@@ -52,6 +56,11 @@ public class Configuration implements Parcelable {
             return new Configuration[size];
         }
     };
+
+    public Configuration setLayoutRESId(int resID) {
+        this.layoutRESId = resID;
+        return this;
+    }
 
     public Configuration setNumThumbnails(int numThumbnails) {
         this.numThumbnails = numThumbnails;
@@ -81,6 +90,10 @@ public class Configuration implements Parcelable {
     public Configuration setVideoSource(String videoSource) {
         this.videoSource = videoSource;
         return this;
+    }
+
+    public int getLayoutRESId() {
+        return layoutRESId;
     }
 
     public int getNumThumbnails() {
