@@ -13,7 +13,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.TextureView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -34,7 +33,6 @@ import com.google.android.exoplayer2.upstream.FileDataSource;
 import java.io.File;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -63,7 +61,7 @@ public class ChooseThumbnailActivity extends AppCompatActivity implements
     private long finalThumbPosition = 0;
     private Bitmap finalThumbBitmap;
 
-    private Button doneButton;
+    private View doneButton;
 
     private PlayerView thumbPreview;
     private ExoPlayer previewPlayer;
@@ -107,35 +105,37 @@ public class ChooseThumbnailActivity extends AppCompatActivity implements
         thumbPreview = findViewById(R.id.thumb_preview);
 
         videoTimelineView = findViewById(R.id.video_timeline_view);
+        videoTimelineView.setNumThumbnails(configuration.getNumThumbnails());
 
         timelineSeekView = findViewById(R.id.timeline_seek_view);
+        timelineSeekView.setHandleColor(configuration.getTimelineSeekViewHandleColor());
+        timelineSeekView.setSliderWidth(configuration.getTimelineSeekViewSliderWidth());
+        timelineSeekView.setSliderHandleCircleRadius(configuration.getTimelineSeekViewSliderHandleRadius());
+        timelineSeekView.setSliderOvershootHeight(configuration.getTimelineSeekViewSliderOvershootHeight());
 
         doneButton = findViewById(R.id.done_button);
         doneButton.setVisibility(View.INVISIBLE);
-        doneButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                progressWrapper.setVisibility(View.VISIBLE);
-                Disposable disposable = Observable
-                        .create((ObservableOnSubscribe<Uri>) emitter -> {
-                            finalThumbBitmap = previewTextureView.getBitmap();
-                            emitter.onNext(Utils.createFileForBitmap(ChooseThumbnailActivity.this, finalThumbBitmap));
-                        }).subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(fileUri -> {
-                            progressWrapper.setVisibility(View.GONE);
-                            Intent resultIntent = new Intent();
-                            resultIntent.putExtra(INTENT_RESULT_EXTRA_THUMB_POSITION, finalThumbPosition);
-                            resultIntent.putExtra(INTENT_RESULT_EXTRA_THUMB_BITMAP_FILE_URI, fileUri);
-                            setResult(RESULT_OK, resultIntent);
-                            finish();
-                        }, e -> {
-                            progressWrapper.setVisibility(View.GONE);
-                            setResult(RESULT_CANCELED);
-                            finish();
-                            e.printStackTrace();
-                        });
-            }
+        doneButton.setOnClickListener(view -> {
+            progressWrapper.setVisibility(View.VISIBLE);
+            Disposable disposable = Observable
+                    .create((ObservableOnSubscribe<Uri>) emitter -> {
+                        finalThumbBitmap = previewTextureView.getBitmap();
+                        emitter.onNext(Utils.createFileForBitmap(ChooseThumbnailActivity.this, finalThumbBitmap));
+                    }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(fileUri -> {
+                        progressWrapper.setVisibility(View.GONE);
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra(INTENT_RESULT_EXTRA_THUMB_POSITION, finalThumbPosition);
+                        resultIntent.putExtra(INTENT_RESULT_EXTRA_THUMB_BITMAP_FILE_URI, fileUri);
+                        setResult(RESULT_OK, resultIntent);
+                        finish();
+                    }, e -> {
+                        progressWrapper.setVisibility(View.GONE);
+                        setResult(RESULT_CANCELED);
+                        finish();
+                        e.printStackTrace();
+                    });
         });
 
         if (checkPermissions()) {
@@ -156,7 +156,6 @@ public class ChooseThumbnailActivity extends AppCompatActivity implements
             Toast.makeText(this, "Set video path in intent", Toast.LENGTH_SHORT).show();
             setResult(RESULT_CANCELED);
             finish();
-            return;
         }
     }
 

@@ -116,6 +116,10 @@ public class VideoTimelineView extends View {
         return videoLengthInMicros;
     }
 
+    public void setNumThumbnails(int numThumbnails) {
+        this.numThumbnails = numThumbnails;
+    }
+
     public VideoTimelineView(Context context) {
         super(context);
         this.context = context;

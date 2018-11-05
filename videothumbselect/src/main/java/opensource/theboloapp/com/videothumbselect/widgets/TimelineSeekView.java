@@ -20,6 +20,11 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import opensource.theboloapp.com.videothumbselect.Utils;
 
+import static opensource.theboloapp.com.videothumbselect.Defaults.TIMELINE_SEEK_VIEW_HANDLE_COLOR;
+import static opensource.theboloapp.com.videothumbselect.Defaults.TIMELINE_SEEK_VIEW_SLIDER_HANDLE_RADIUS_IN_DP;
+import static opensource.theboloapp.com.videothumbselect.Defaults.TIMELINE_SEEK_VIEW_SLIDER_OVERSHOOT_HEIGHT_IN_DP;
+import static opensource.theboloapp.com.videothumbselect.Defaults.TIMELINE_SEEK_VIEW_SLIDER_WIDTH_IN_DP;
+
 public class TimelineSeekView extends View {
 
     private Context context;
@@ -36,7 +41,9 @@ public class TimelineSeekView extends View {
 
     private int windowSize;
 
-    private int sliderWidth = 6, sliderHandleCircleRadius = Utils.dpToPixels(5), sliderOvershootHeight = Utils.dpToPixels(5);
+    private int sliderWidth = Utils.dpToPixels(TIMELINE_SEEK_VIEW_SLIDER_WIDTH_IN_DP);
+    private int sliderHandleCircleRadius = Utils.dpToPixels(TIMELINE_SEEK_VIEW_SLIDER_HANDLE_RADIUS_IN_DP);
+    private int sliderOvershootHeight = Utils.dpToPixels(TIMELINE_SEEK_VIEW_SLIDER_OVERSHOOT_HEIGHT_IN_DP);
 
     private float thumbPosition = 0;
 
@@ -83,6 +90,22 @@ public class TimelineSeekView extends View {
         init();
     }
 
+    public void setHandleColor(int color) {
+        handlePaint.setColor(color);
+    }
+
+    public void setSliderWidth(int sliderWidth) {
+        this.sliderWidth = Utils.dpToPixels(sliderWidth);
+    }
+
+    public void setSliderHandleCircleRadius(int sliderHandleCircleRadius) {
+        this.sliderHandleCircleRadius = Utils.dpToPixels(sliderHandleCircleRadius);
+    }
+
+    public void setSliderOvershootHeight(int sliderOvershootHeight) {
+        this.sliderOvershootHeight = Utils.dpToPixels(sliderOvershootHeight);
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -112,7 +135,7 @@ public class TimelineSeekView extends View {
 
         handlePaint = new Paint();
         handlePaint.setAntiAlias(true);
-        handlePaint.setColor(Color.WHITE);
+        handlePaint.setColor(TIMELINE_SEEK_VIEW_HANDLE_COLOR);
 
     }
 
@@ -150,7 +173,7 @@ public class TimelineSeekView extends View {
 
         canvas.drawRect(thumbPosition - sliderWidth / 2, 0, thumbPosition + sliderWidth / 2, thumbSize + sliderOvershootHeight, handlePaint);
 
-        canvas.drawCircle(thumbPosition, thumbSize + sliderOvershootHeight + sliderHandleCircleRadius, sliderHandleCircleRadius, handlePaint);
+        canvas.drawCircle(thumbPosition, thumbSize + sliderOvershootHeight, sliderHandleCircleRadius, handlePaint);
 
     }
 
