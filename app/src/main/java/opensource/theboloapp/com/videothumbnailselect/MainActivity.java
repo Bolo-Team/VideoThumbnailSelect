@@ -1,6 +1,7 @@
 package opensource.theboloapp.com.videothumbnailselect;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -45,7 +46,9 @@ public class MainActivity extends AppCompatActivity {
                 .setActivity(this)
                 .setRequestCode(REQUEST_CODE_SELECT_THUMBNAIL)
                 .setVideoSource(videoSource)
+                .setLayoutRESId(R.layout.custom_choose_thumbnail_activity)
                 .setNumThumbnails(15)
+                .setTimelineSeekViewHandleColor(Color.GREEN)
                 .start();
     }
 
